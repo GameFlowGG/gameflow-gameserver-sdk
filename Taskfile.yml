@@ -21,6 +21,11 @@ tasks:
     cmds:
       - pnpm --filter @gameflow.gg/gameserver-sdk test
 
+  test:godot:
+    desc: Run Godot SDK tests (requires a Godot 4 binary; set GODOT to override)
+    cmds:
+      - node sdk/godot/test/run.mjs
+
   ci:proto:
     desc: Lint and format-check proto files
     cmds:

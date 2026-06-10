@@ -1,0 +1,14 @@
+; Development project for the GameFlow Godot SDK. Games consume the SDK by
+; copying addons/gameflow/ into their own project; this project exists to run
+; the test suite and the example server.
+
+config_version=5
+
+[application]
+
+config/name="GameFlow Godot SDK"
+config/features=PackedStringArray("4.4")
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gameflow/plugin.cfg")
