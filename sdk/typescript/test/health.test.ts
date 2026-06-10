@@ -107,7 +107,12 @@ describe('HealthLoop', () => {
     expect(maxInFlight).toBe(1);
   });
 
-  it('does not keep the process alive (timers are unref’d)', async () => {
+  // Spawning node with --experimental-strip-types (and import.meta.dirname)
+  // requires Node >= 22.6; on older runtimes the child process can't load .ts.
+  const [major = 0, minor = 0] = process.versions.node.split('.').map(Number);
+  const canStripTypes = major > 22 || (major === 22 && minor >= 6);
+
+  it.skipIf(!canStripTypes)('does not keep the process alive (timers are unref’d)', async () => {
     const { execFileSync } = await import('node:child_process');
     const script = `
       const { HealthLoop } = await import('${import.meta.dirname?.replace(/\\/g, '/')}/../src/health.ts');
