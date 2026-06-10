@@ -1,0 +1,16 @@
+{
+  "name": "@gameflow/example-node-tcp",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  },
+  "dependencies": {
+    "@gameflow/gameserver-sdk": "workspace:*"
+  }
+}

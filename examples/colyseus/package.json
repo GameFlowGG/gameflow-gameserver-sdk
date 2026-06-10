@@ -1,0 +1,20 @@
+{
+  "name": "@gameflow/example-colyseus",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Colyseus game server integrated with GameFlow (player tracking, health, lifecycle)",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "player:join": "node scripts/join.mjs",
+    "player:leave": "node scripts/leave.mjs"
+  },
+  "dependencies": {
+    "colyseus": "^0.16.0",
+    "colyseus.js": "^0.16.0",
+    "tsx": "^4.19.0"
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  }
+}
