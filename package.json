@@ -1,0 +1,9 @@
+{
+  "name": "gameflow-gameserver-sdk",
+  "private": true,
+  "version": "0.0.0",
+  "packageManager": "pnpm@10.29.3",
+  "devDependencies": {
+    "prettier": "^3.5.0"
+  }
+}

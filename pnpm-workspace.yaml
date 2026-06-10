@@ -1,0 +1,5 @@
+packages:
+  - sdk/typescript
+  - examples/node-tcp
+  # examples/colyseus is intentionally excluded: it is npm-managed
+  # (package-lock.json) because GameFlow's Colyseus build template runs npm ci.
