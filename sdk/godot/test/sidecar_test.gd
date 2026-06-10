@@ -32,6 +32,17 @@ func run_tests() -> void:
 	var ghost: GameFlowResult = await gf.players.untrack("ghost")
 	check(ghost.ok and ghost.value == false, "HTTP 404 on remove -> found=false")
 
+	# Mutations answered 200-with-empty-body (lost response framing) must
+	# self-heal by re-reading the list instead of caching an empty snapshot.
+	await _set_empty_mutation_body(true)
+	var healed: GameFlowResult = await gf.players.untrack("seeded")
+	check(healed.ok and healed.value == true, "untrack succeeds on empty response body")
+	check_eq(gf.players.count(), 1, "count self-heals after empty untrack body")
+	check((await gf.players.track("p3")).ok, "track succeeds on empty response body")
+	check_eq(gf.players.count(), 2, "count self-heals after empty track body")
+	check_eq(gf.players.capacity(), 2, "capacity self-heals after empty track body")
+	await _set_empty_mutation_body(false)
+
 	# Watch stream (NDJSON over the proto-named wire shape)
 	var states := []
 	var unsubscribe := gf.watch(func(info: GameFlowServerInfo) -> void: states.append(info.state))
@@ -59,3 +70,15 @@ func run_tests() -> void:
 	check((await gf.shutdown()).ok, "shutdown ok")
 	var late: GameFlowResult = await gf.players.track("late")
 	check_eq(late.code, GameFlowResult.NOT_CONNECTED, "track after shutdown -> NOT_CONNECTED")
+
+
+# Pokes the fixture's control server (port in GF_TEST_CONTROL_PORT, set by
+# run.mjs) reusing the sidecar transport as a plain HTTP client.
+func _set_empty_mutation_body(enabled: bool) -> void:
+	const Transport := preload("res://addons/gameflow/internal/transport_sidecar.gd")
+	var port := OS.get_environment("GF_TEST_CONTROL_PORT").to_int()
+	var control := Transport.new(port, 3000, GameFlowLogger.silent())
+	var res: GameFlowResult = await control._request(
+		HTTPClient.METHOD_POST, "/set-empty-mutation-body?value=%s" % str(enabled).to_lower(), ""
+	)
+	check(res.ok, "control toggle empty-mutation-body=%s" % enabled)

@@ -59,7 +59,7 @@ func add_player(session_id: String) -> GameFlowResult:
 		return res
 	var status: int = res.value.status
 	if status < 400:
-		return GameFlowResult.success(_Raw.parse_list(res.value.body))
+		return await _mutation_snapshot(res.value.body)
 	if status == 409:
 		return GameFlowResult.failure(
 			GameFlowResult.PLAYER_ALREADY_CONNECTED, 'player "%s" is already connected' % session_id
@@ -98,7 +98,15 @@ func remove_player(session_id: String) -> GameFlowResult:
 		return res
 	if res.value.status == 404:
 		return GameFlowResult.success(null)
-	return GameFlowResult.success(_Raw.parse_list(res.value.body))
+	return await _mutation_snapshot(res.value.body)
+
+
+# A successful mutation echoes the updated list; when the body was missing
+# or unparseable, re-read the list instead of caching an empty snapshot.
+func _mutation_snapshot(body: Variant) -> GameFlowResult:
+	if body is Dictionary:
+		return GameFlowResult.success(_Raw.parse_list(body))
+	return await get_player_list()
 
 
 # Long-lived NDJSON stream: no per-request timeout, only cancellation.
@@ -146,6 +154,8 @@ func watch_game_server(on_update: Callable, cancel) -> GameFlowResult:
 			client.close()
 			return GameFlowResult.success()
 		client.poll()
+		if client.get_status() != HTTPClient.STATUS_BODY:
+			break
 		var chunk := client.read_response_body_chunk()
 		if chunk.size() == 0:
 			await _Raw.frame()
@@ -217,6 +227,11 @@ func _http(method: int, path: String, body: String, timeout_ms: int) -> Dictiona
 		return {"error": "could not connect (status %d)" % client.get_status(), "status": 0, "body": null}
 
 	var headers := PackedStringArray()
+	# One connection per request anyway, and asking for close forces the
+	# runtime to frame the response explicitly (Content-Length, chunked or
+	# close+EOF). Keep-alive responses without explicit framing are silently
+	# dropped by HTTPClient as "no body".
+	headers.append("Connection: close")
 	if body != "":
 		headers.append("Content-Type: application/json")
 	err = client.request(method, path, headers, body)
@@ -237,6 +252,10 @@ func _http(method: int, path: String, body: String, timeout_ms: int) -> Dictiona
 	var bytes := PackedByteArray()
 	while client.get_status() == HTTPClient.STATUS_BODY:
 		client.poll()
+		# poll() may have consumed the end of the body (close/zero-length);
+		# reading past that never yields data and logs an engine error.
+		if client.get_status() != HTTPClient.STATUS_BODY:
+			break
 		var chunk := client.read_response_body_chunk()
 		if chunk.size() > 0:
 			bytes.append_array(chunk)
