@@ -12,7 +12,9 @@ const endpoint = process.argv[2] ?? 'ws://127.0.0.1:8081';
 console.log(`connecting to ${endpoint} ...`);
 const client = new Client(endpoint);
 const room = await client.joinOrCreate('game');
-console.log(`joined as ${room.sessionId} (pid ${process.pid}); run scripts/leave.mjs to disconnect`);
+console.log(
+  `joined as ${room.sessionId} (pid ${process.pid}); run scripts/leave.mjs to disconnect`
+);
 appendFileSync(PID_FILE, `${process.pid}\n`);
 
 room.onMessage('chat', (message) => console.log('chat:', JSON.stringify(message)));
