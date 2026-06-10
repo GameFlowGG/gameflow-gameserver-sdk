@@ -59,7 +59,7 @@ export class FakeSidecar {
   /** Pushes the current game server state to all connected watch streams. */
   pushWatchUpdate(): void {
     this.syncGameServerLists();
-    const line = JSON.stringify({ result: this.gameServer }) + '\n';
+    const line = JSON.stringify({ result: toWire(this.gameServer) }) + '\n';
     for (const client of this.watchClients) client.write(line);
   }
 
@@ -101,7 +101,7 @@ export class FakeSidecar {
     }
     if (req.method === 'GET' && path === '/watch/gameserver') {
       res.writeHead(200, { 'content-type': 'application/json' });
-      res.write(JSON.stringify({ result: this.gameServer }) + '\n');
+      res.write(JSON.stringify({ result: toWire(this.gameServer) }) + '\n');
       this.watchClients.add(res);
       res.on('close', () => this.watchClients.delete(res));
       return;
@@ -166,13 +166,21 @@ export class FakeSidecar {
 
   private wireGameServer(): RawGameServer {
     this.syncGameServerLists();
-    return this.gameServer;
+    return toWire(this.gameServer);
   }
 
   // int64 capacity goes over the wire as a string, like grpc-gateway does
   private wireList(_name: string, list: FakeList): { capacity: string; values: string[] } {
     return { capacity: String(list.capacity), values: [...list.values] };
   }
+}
+
+// The real gateway marshals with UseProtoNames: the game server goes over
+// the wire as `object_meta`, never `objectMeta`. Tests keep mutating the
+// camelCase property; only the serialized responses use proto names.
+function toWire(gs: RawGameServer): RawGameServer {
+  const { objectMeta, ...rest } = gs;
+  return { ...rest, object_meta: objectMeta };
 }
 
 function sendJson(res: ServerResponse, status: number, payload: unknown): void {

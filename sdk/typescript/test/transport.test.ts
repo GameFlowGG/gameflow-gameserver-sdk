@@ -59,6 +59,14 @@ describe('lifecycle requests', () => {
     expect(gs.status?.lists?.players?.capacity).toBe('2');
   });
 
+  // Regression: the real sidecar marshals proto names (object_meta). The SDK
+  // read objectMeta only, so payload annotations were invisible in production.
+  it('normalizes proto-named object_meta to objectMeta', async () => {
+    sidecar.gameServer.objectMeta!.annotations = { GAMEFLOW_PAYLOAD: 'match-1' };
+    const gs = await transport.getGameServer();
+    expect(gs.objectMeta?.annotations?.GAMEFLOW_PAYLOAD).toBe('match-1');
+  });
+
   it('wraps connection refusal in SidecarUnavailableError', async () => {
     await sidecar.stop();
     await expect(transport.ready()).rejects.toBeInstanceOf(SidecarUnavailableError);
@@ -131,6 +139,24 @@ describe('watchGameServer', () => {
     sidecar.pushWatchRaw(update.slice(10));
     await waitFor(() => seen.length >= 2);
     expect(seen[1]!.objectMeta?.name).toBe('gs-split');
+
+    sidecar.closeWatchStreams();
+    await done;
+  });
+
+  it('normalizes proto-named object_meta on watch updates', async () => {
+    const seen: RawGameServer[] = [];
+    const abort = new AbortController();
+    const done = transport.watchGameServer((gs) => seen.push(gs), abort.signal);
+
+    await waitFor(() => seen.length >= 1);
+    sidecar.pushWatchRaw(
+      JSON.stringify({
+        result: { object_meta: { name: 'gs-late', annotations: { GAMEFLOW_PAYLOAD: 'm2' } } },
+      }) + '\n'
+    );
+    await waitFor(() => seen.length >= 2);
+    expect(seen[1]!.objectMeta?.annotations?.GAMEFLOW_PAYLOAD).toBe('m2');
 
     sidecar.closeWatchStreams();
     await done;

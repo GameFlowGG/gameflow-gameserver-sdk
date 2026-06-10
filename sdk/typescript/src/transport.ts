@@ -6,6 +6,7 @@ import {
   SidecarUnavailableError,
 } from './errors';
 import type { Logger } from './log';
+import { normalizeGameServer } from './types';
 import type { PlayerListSnapshot, RawGameServer, RawList } from './types';
 
 export const PLAYERS_LIST = 'players';
@@ -71,7 +72,7 @@ export class SidecarTransport implements Transport {
 
   async getGameServer(): Promise<RawGameServer> {
     const res = await this.request('GET', '/gameserver');
-    return (await res.json()) as RawGameServer;
+    return normalizeGameServer((await res.json()) as RawGameServer);
   }
 
   async getPlayerList(): Promise<PlayerListSnapshot> {
@@ -152,7 +153,7 @@ export class SidecarTransport implements Transport {
       this.logger.warn(`watch: stream error: ${parsed.error.message ?? 'unknown'}`);
       return;
     }
-    if (parsed.result) onUpdate(parsed.result);
+    if (parsed.result) onUpdate(normalizeGameServer(parsed.result));
   }
 
   /**

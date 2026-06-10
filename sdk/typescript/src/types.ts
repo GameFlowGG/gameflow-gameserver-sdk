@@ -42,18 +42,36 @@ export interface RawList {
   values?: string[];
 }
 
+interface RawObjectMeta {
+  name?: string;
+  annotations?: Record<string, string>;
+  labels?: Record<string, string>;
+}
+
 export interface RawGameServer {
-  objectMeta?: {
-    name?: string;
-    annotations?: Record<string, string>;
-    labels?: Record<string, string>;
-  };
+  /** The real sidecar marshals proto field names (UseProtoNames: true). */
+  object_meta?: RawObjectMeta;
+  objectMeta?: RawObjectMeta;
   status?: {
     state?: string;
     address?: string;
     ports?: { name?: string; port?: number }[];
     lists?: Record<string, RawList>;
   };
+}
+
+/**
+ * The Agones sidecar gateway serializes proto field names, so the game server
+ * arrives with `object_meta`; local mode builds `objectMeta` directly.
+ * Normalize at the transport boundary so the rest of the SDK only ever reads
+ * `objectMeta`. (Every other field the SDK consumes is a single word and
+ * identical in both spellings.)
+ */
+export function normalizeGameServer(gs: RawGameServer): RawGameServer {
+  if (gs.object_meta && !gs.objectMeta) {
+    return { ...gs, objectMeta: gs.object_meta };
+  }
+  return gs;
 }
 
 /** Parsed players list state. `exists` is false when tracking is disabled. */
