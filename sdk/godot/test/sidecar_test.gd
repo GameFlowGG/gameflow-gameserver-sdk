@@ -32,16 +32,22 @@ func run_tests() -> void:
 	var ghost: GameFlowResult = await gf.players.untrack("ghost")
 	check(ghost.ok and ghost.value == false, "HTTP 404 on remove -> found=false")
 
-	# Mutations answered 200-with-empty-body (lost response framing) must
-	# self-heal by re-reading the list instead of caching an empty snapshot.
-	await _set_empty_mutation_body(true)
+	# The cache must never trust the mutation echo: real runtimes answer with
+	# the updated list, a zeroed default List, or a body the client can't
+	# read. Either way count/capacity must stay correct.
+	await _set_mutation_echo("default-list")
 	var healed: GameFlowResult = await gf.players.untrack("seeded")
-	check(healed.ok and healed.value == true, "untrack succeeds on empty response body")
-	check_eq(gf.players.count(), 1, "count self-heals after empty untrack body")
+	check(healed.ok and healed.value == true, "untrack succeeds on default-list echo")
+	check_eq(gf.players.count(), 1, "count correct after default-list untrack echo")
+	check((await gf.players.track("p3")).ok, "track succeeds on default-list echo")
+	check_eq(gf.players.count(), 2, "count correct after default-list track echo")
+	check_eq(gf.players.capacity(), 2, "capacity correct after default-list track echo")
+	await _set_mutation_echo("empty")
+	check((await gf.players.untrack("p3")).ok, "untrack succeeds on empty response body")
+	check_eq(gf.players.count(), 1, "count correct after empty untrack body")
 	check((await gf.players.track("p3")).ok, "track succeeds on empty response body")
-	check_eq(gf.players.count(), 2, "count self-heals after empty track body")
-	check_eq(gf.players.capacity(), 2, "capacity self-heals after empty track body")
-	await _set_empty_mutation_body(false)
+	check_eq(gf.players.count(), 2, "count correct after empty track body")
+	await _set_mutation_echo("list")
 
 	# Watch stream (NDJSON over the proto-named wire shape)
 	var states := []
@@ -74,11 +80,11 @@ func run_tests() -> void:
 
 # Pokes the fixture's control server (port in GF_TEST_CONTROL_PORT, set by
 # run.mjs) reusing the sidecar transport as a plain HTTP client.
-func _set_empty_mutation_body(enabled: bool) -> void:
+func _set_mutation_echo(mode: String) -> void:
 	const Transport := preload("res://addons/gameflow/internal/transport_sidecar.gd")
 	var port := OS.get_environment("GF_TEST_CONTROL_PORT").to_int()
 	var control := Transport.new(port, 3000, GameFlowLogger.silent())
 	var res: GameFlowResult = await control._request(
-		HTTPClient.METHOD_POST, "/set-empty-mutation-body?value=%s" % str(enabled).to_lower(), ""
+		HTTPClient.METHOD_POST, "/set-mutation-echo?value=%s" % mode, ""
 	)
-	check(res.ok, "control toggle empty-mutation-body=%s" % enabled)
+	check(res.ok, "control set mutation-echo=%s" % mode)

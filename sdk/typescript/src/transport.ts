@@ -88,7 +88,12 @@ export class SidecarTransport implements Transport {
       { value: sessionId },
       [400, 404, 409]
     );
-    if (res.ok) return parseList((await res.json()) as RawList);
+    if (res.ok) {
+      // Some runtime versions answer mutations with an empty/default List
+      // instead of the updated one; re-read the list rather than trust it.
+      await res.body?.cancel();
+      return this.getPlayerList();
+    }
 
     const body = await readGatewayError(res);
     if (res.status === 409) {
@@ -115,7 +120,8 @@ export class SidecarTransport implements Transport {
       [404]
     );
     if (res.status === 404) return null;
-    return parseList((await res.json()) as RawList);
+    await res.body?.cancel();
+    return this.getPlayerList();
   }
 
   async watchGameServer(onUpdate: (gs: RawGameServer) => void, signal: AbortSignal): Promise<void> {

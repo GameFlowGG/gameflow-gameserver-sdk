@@ -30,11 +30,13 @@ export class FakeSidecar {
   /** Respond 503 to this many requests before behaving normally again. */
   failNextRequests = 0;
   /**
-   * Apply list mutations but answer them with an empty 200 body, like a
-   * runtime whose response framing the client could not read. SDKs must
-   * recover by re-reading the list.
+   * What list mutations echo back. Real runtimes differ: some echo the
+   * updated list ('list'), some answer an empty/default List proto
+   * ('default-list', seen on the GameFlow platform), and a lost response
+   * body reads as empty ('empty'). SDKs must not trust the echo and
+   * re-read the list instead.
    */
-  emptyMutationBody = false;
+  mutationEcho: 'list' | 'default-list' | 'empty' = 'list';
   /** Delay every response by this many milliseconds. */
   delayMs = 0;
 
@@ -160,10 +162,13 @@ export class FakeSidecar {
   }
 
   private sendMutationResult(res: ServerResponse, name: string, list: FakeList): void {
-    if (this.emptyMutationBody) {
+    if (this.mutationEcho === 'empty') {
       res.writeHead(200, { 'content-type': 'application/json' });
       res.end();
       return;
+    }
+    if (this.mutationEcho === 'default-list') {
+      return sendJson(res, 200, { name: '', capacity: '0', values: [] });
     }
     sendJson(res, 200, this.wireList(name, list));
   }

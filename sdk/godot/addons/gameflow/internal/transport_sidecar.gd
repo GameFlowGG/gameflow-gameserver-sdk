@@ -59,7 +59,9 @@ func add_player(session_id: String) -> GameFlowResult:
 		return res
 	var status: int = res.value.status
 	if status < 400:
-		return await _mutation_snapshot(res.value.body)
+		# Some runtime versions answer mutations with an empty/default List
+		# instead of the updated one; re-read the list rather than trust it.
+		return await get_player_list()
 	if status == 409:
 		return GameFlowResult.failure(
 			GameFlowResult.PLAYER_ALREADY_CONNECTED, 'player "%s" is already connected' % session_id
@@ -98,14 +100,6 @@ func remove_player(session_id: String) -> GameFlowResult:
 		return res
 	if res.value.status == 404:
 		return GameFlowResult.success(null)
-	return await _mutation_snapshot(res.value.body)
-
-
-# A successful mutation echoes the updated list; when the body was missing
-# or unparseable, re-read the list instead of caching an empty snapshot.
-func _mutation_snapshot(body: Variant) -> GameFlowResult:
-	if body is Dictionary:
-		return GameFlowResult.success(_Raw.parse_list(body))
 	return await get_player_list()
 
 

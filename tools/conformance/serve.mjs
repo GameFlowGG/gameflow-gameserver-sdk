@@ -10,8 +10,9 @@
 //   GET  /requests            -> JSON array of every recorded request
 //   POST /push-update         -> push the current state to watch streams
 //   POST /set-payload?value=x -> set the launch payload annotation and push
-//   POST /set-empty-mutation-body?value=true|false
-//                             -> make list mutations answer 200 with no body
+//   POST /set-mutation-echo?value=list|default-list|empty
+//                             -> what list mutations echo back (default-list
+//                                mirrors runtimes that answer a zeroed List)
 
 import { createServer } from 'node:http';
 
@@ -54,8 +55,8 @@ const control = createServer((req, res) => {
     res.end();
     return;
   }
-  if (req.method === 'POST' && url.pathname === '/set-empty-mutation-body') {
-    sidecar.emptyMutationBody = url.searchParams.get('value') === 'true';
+  if (req.method === 'POST' && url.pathname === '/set-mutation-echo') {
+    sidecar.mutationEcho = url.searchParams.get('value') ?? 'list';
     res.writeHead(204);
     res.end();
     return;

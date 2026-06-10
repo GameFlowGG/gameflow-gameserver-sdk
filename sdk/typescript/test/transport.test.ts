@@ -87,7 +87,17 @@ describe('player list operations', () => {
 
   it('uses the custom-verb path with a literal colon', async () => {
     await transport.addPlayer('p1');
-    expect(sidecar.requests.at(-1)!.path).toBe('/v1beta1/lists/players:addValue');
+    expect(sidecar.requestsTo('/v1beta1/lists/players:addValue')).toHaveLength(1);
+  });
+
+  // Regression: the platform's runtime answers mutations with a zeroed
+  // default List, so the echoed body must never be trusted as the cache.
+  it('does not trust the mutation echo (zeroed default List)', async () => {
+    sidecar.mutationEcho = 'default-list';
+    const added = await transport.addPlayer('p1');
+    expect(added).toEqual({ exists: true, capacity: 2, values: ['p1'] });
+    const removed = await transport.removePlayer('p1');
+    expect(removed).toEqual({ exists: true, capacity: 2, values: [] });
   });
 
   it('throws PlayerAlreadyConnectedError on duplicates', async () => {
