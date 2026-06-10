@@ -9,6 +9,7 @@ on:
         type: choice
         options:
           - typescript
+          - godot
       version:
         description: 'Version to release (e.g. 0.1.0)'
         required: true
@@ -66,3 +67,52 @@ jobs:
           gh release create "$TAG" \
             --title "@gameflow.gg/gameserver-sdk ${{ inputs.version }}" \
             --generate-notes
+
+  release-godot:
+    if: inputs.sdk == 'godot'
+    runs-on: ubuntu-latest
+    env:
+      GODOT_VERSION: '4.6.3'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Install Godot
+        run: |
+          curl -fsSL -o /tmp/godot.zip \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q /tmp/godot.zip -d /tmp
+          echo "GODOT=/tmp/Godot_v${GODOT_VERSION}-stable_linux.x86_64" >> "$GITHUB_ENV"
+
+      - name: Godot SDK tests
+        run: node sdk/godot/test/run.mjs
+
+      - name: Set version
+        run: |
+          sed -i 's/^version=.*/version="${{ inputs.version }}"/' sdk/godot/addons/gameflow/plugin.cfg
+
+      - name: Package addon
+        # Zip rooted at addons/gameflow so it unpacks cleanly into a project
+        # root (same layout the Godot Asset Library expects).
+        run: |
+          cp LICENSE sdk/godot/addons/gameflow/
+          cd sdk/godot
+          zip -qr "$GITHUB_WORKSPACE/gameflow-godot-sdk-${{ inputs.version }}.zip" addons/gameflow
+
+      - name: Tag and create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="godot-v${{ inputs.version }}"
+          git tag "$TAG"
+          git push origin "$TAG"
+          gh release create "$TAG" \
+            --title "GameFlow Godot SDK ${{ inputs.version }}" \
+            --generate-notes \
+            "gameflow-godot-sdk-${{ inputs.version }}.zip"

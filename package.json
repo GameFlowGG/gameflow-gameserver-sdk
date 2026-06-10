@@ -1,6 +1,7 @@
 {
   "name": "gameflow-gameserver-sdk",
   "private": true,
+  "type": "module",
   "version": "0.0.0",
   "packageManager": "pnpm@10.29.3",
   "devDependencies": {

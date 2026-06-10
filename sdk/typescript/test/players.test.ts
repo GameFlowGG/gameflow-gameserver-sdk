@@ -4,7 +4,7 @@ import { PlayerTrackingDisabledError, ServerFullError } from '../src/errors';
 import { silentLogger } from '../src/log';
 import { Players } from '../src/players';
 import { SidecarTransport } from '../src/transport';
-import { FakeSidecar } from './fixtures/fake-sidecar';
+import { FakeSidecar } from '../../../tools/conformance/fake-sidecar';
 
 let sidecar: FakeSidecar;
 let players: Players;

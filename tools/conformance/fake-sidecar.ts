@@ -1,7 +1,7 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
 
-import type { RawGameServer } from '../../src/types';
+import type { RawGameServer } from '../../sdk/typescript/src/types';
 
 export interface RecordedRequest {
   method: string;
