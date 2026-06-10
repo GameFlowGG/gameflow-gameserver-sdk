@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { NotConnectedError, SidecarUnavailableError } from '../src/errors';
 import { GameFlow } from '../src/gameflow';
-import { FakeSidecar } from './fixtures/fake-sidecar';
+import { FakeSidecar } from '../../../tools/conformance/fake-sidecar';
 
 const ENV_KEYS = [
   'AGONES_SDK_HTTP_PORT',

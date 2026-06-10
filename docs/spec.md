@@ -2,7 +2,7 @@
 
 Audience: SDK implementers (TypeScript, Unity, Unreal, Godot, Rust, Go, Python). Users never need this document.
 
-The API surface is defined in [`proto/gameflow/sdk/v1/sdk.proto`](../proto/gameflow/sdk/v1/sdk.proto). This document defines the behavior that protobuf cannot capture. An implementation is conformant when it exposes the proto surface (naming adapted to its language idiom) with the behaviors below, verified against the fake runtime fixture (`sdk/typescript/test/fixtures/fake-sidecar.ts`, to be extracted to `tools/conformance/` when the second SDK lands).
+The API surface is defined in [`proto/gameflow/sdk/v1/sdk.proto`](../proto/gameflow/sdk/v1/sdk.proto). This document defines the behavior that protobuf cannot capture. An implementation is conformant when it exposes the proto surface (naming adapted to its language idiom) with the behaviors below, verified against the fake runtime fixture (`tools/conformance/fake-sidecar.ts`, served standalone by `tools/conformance/serve.mjs` for non-Node SDKs).
 
 ## Transport (v1)
 

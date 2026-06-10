@@ -9,7 +9,7 @@ import {
 import { silentLogger } from '../src/log';
 import { SidecarTransport, parseList } from '../src/transport';
 import type { RawGameServer } from '../src/types';
-import { FakeSidecar } from './fixtures/fake-sidecar';
+import { FakeSidecar } from '../../../tools/conformance/fake-sidecar';
 
 let sidecar: FakeSidecar;
 let baseUrl: string;
