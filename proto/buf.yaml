@@ -1,0 +1,16 @@
+version: v2
+lint:
+  use:
+    - DEFAULT
+  except:
+    - COMMENT_RPC
+    - COMMENT_ENUM
+    - COMMENT_FIELD
+    - COMMENT_ONEOF
+    - COMMENT_SERVICE
+    - COMMENT_MESSAGE
+    - COMMENT_ENUM_VALUE
+  disallow_comment_ignores: true
+breaking:
+  use:
+    - FILE

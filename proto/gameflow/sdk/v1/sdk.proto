@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+package gameflow.sdk.v1;
+
+// Canonical cross-language contract for GameFlow game-server SDKs.
+//
+// In v1 this file is a specification, not a wire protocol: SDK implementations
+// transport these semantics over the local GameFlow runtime's REST API. Every
+// SDK (TypeScript, Unity, Unreal, Godot, Rust, Go, Python) must expose this
+// surface with naming adapted to its language idiom. Behavioral requirements
+// that protobuf cannot capture (health cadence, retry parameters, local mode,
+// stable error codes) live in docs/spec.md.
+service GameServerSDKService {
+  // Marks the server ready to accept players. Implementations start the
+  // automatic health heartbeat when this succeeds.
+  rpc Ready(ReadyRequest) returns (ReadyResponse);
+  // Health heartbeat. SDKs send this automatically; users never call it.
+  rpc Health(stream HealthRequest) returns (HealthResponse);
+  // Cleanly shuts the server down. Idempotent.
+  rpc Shutdown(ShutdownRequest) returns (ShutdownResponse);
+  // Returns current server details.
+  rpc GetServerInfo(GetServerInfoRequest) returns (GetServerInfoResponse);
+  // Streams server detail updates (state changes, payload changes, players).
+  rpc WatchServerInfo(WatchServerInfoRequest) returns (stream WatchServerInfoResponse);
+  // Registers a player session. Fails when the session is already connected,
+  // the server is full, or player tracking is disabled for the game.
+  rpc ConnectPlayer(ConnectPlayerRequest) returns (ConnectPlayerResponse);
+  // Unregisters a player session. Succeeds (found=false) when the session was
+  // not connected.
+  rpc DisconnectPlayer(DisconnectPlayerRequest) returns (DisconnectPlayerResponse);
+  // Returns the current player list.
+  rpc GetPlayers(GetPlayersRequest) returns (GetPlayersResponse);
+  // Returns the launch payload (opaque string) for this server, when set.
+  rpc GetPayload(GetPayloadRequest) returns (GetPayloadResponse);
+}
+
+message ServerInfo {
+  string name = 1;
+  string state = 2;
+  string address = 3;
+  repeated ServerPort ports = 4;
+  string region = 5;
+  string build_id = 6;
+  map<string, string> labels = 7;
+  map<string, string> annotations = 8;
+  PlayerList players = 9;
+}
+
+message ServerPort {
+  string name = 1;
+  int32 port = 2;
+}
+
+message PlayerList {
+  // False when the game was created with max players = 0.
+  bool tracking_enabled = 1;
+  int64 capacity = 2;
+  repeated string session_ids = 3;
+}
+
+message ReadyRequest {}
+
+message ReadyResponse {}
+
+message HealthRequest {}
+
+message HealthResponse {}
+
+message ShutdownRequest {}
+
+message ShutdownResponse {}
+
+message GetServerInfoRequest {}
+
+message GetServerInfoResponse {
+  ServerInfo info = 1;
+}
+
+message WatchServerInfoRequest {}
+
+message WatchServerInfoResponse {
+  ServerInfo info = 1;
+}
+
+message ConnectPlayerRequest {
+  string session_id = 1;
+}
+
+message ConnectPlayerResponse {
+  PlayerList players = 1;
+}
+
+message DisconnectPlayerRequest {
+  string session_id = 1;
+}
+
+message DisconnectPlayerResponse {
+  bool found = 1;
+  PlayerList players = 2;
+}
+
+message GetPlayersRequest {}
+
+message GetPlayersResponse {
+  PlayerList players = 1;
+}
+
+message GetPayloadRequest {}
+
+message GetPayloadResponse {
+  // Opaque string set at server launch (may change on match assignment).
+  optional string payload = 1;
+}
