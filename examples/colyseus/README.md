@@ -2,7 +2,7 @@
 
 A minimal [Colyseus](https://colyseus.io) server integrated with the GameFlow SDK: lifecycle, automatic health reporting and player tracking. Built to be uploaded to GameFlow as-is using the default Colyseus build template (no Dockerfile needed).
 
-The SDK is vendored at `src/gameflow-sdk.js` (the built zero-dependency bundle) until it is published to npm.
+Uses the published [`@gameflow.gg/gameserver-sdk`](https://www.npmjs.com/package/@gameflow.gg/gameserver-sdk) package from npm.
 
 ## Run locally
 

@@ -10,6 +10,7 @@
     "player:leave": "node scripts/leave.mjs"
   },
   "dependencies": {
+    "@gameflow.gg/gameserver-sdk": "^0.1.0",
     "colyseus": "^0.16.0",
     "colyseus.js": "^0.16.0",
     "tsx": "^4.19.0"
