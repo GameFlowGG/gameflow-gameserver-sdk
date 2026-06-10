@@ -29,6 +29,12 @@ export class FakeSidecar {
   lists = new Map<string, FakeList>();
   /** Respond 503 to this many requests before behaving normally again. */
   failNextRequests = 0;
+  /**
+   * Apply list mutations but answer them with an empty 200 body, like a
+   * runtime whose response framing the client could not read. SDKs must
+   * recover by re-reading the list.
+   */
+  emptyMutationBody = false;
   /** Delay every response by this many milliseconds. */
   delayMs = 0;
 
@@ -140,17 +146,26 @@ export class FakeSidecar {
       }
       list.values.push(value);
       this.syncGameServerLists();
-      return sendJson(res, 200, this.wireList(name, list));
+      return this.sendMutationResult(res, name, list);
     }
     if (req.method === 'POST' && verb === 'removeValue') {
       const index = list.values.indexOf(value);
       if (index < 0) return sendGrpcError(res, 404, 5, `value ${value} not found in list ${name}`);
       list.values.splice(index, 1);
       this.syncGameServerLists();
-      return sendJson(res, 200, this.wireList(name, list));
+      return this.sendMutationResult(res, name, list);
     }
 
     sendGrpcError(res, 404, 5, 'unsupported list operation');
+  }
+
+  private sendMutationResult(res: ServerResponse, name: string, list: FakeList): void {
+    if (this.emptyMutationBody) {
+      res.writeHead(200, { 'content-type': 'application/json' });
+      res.end();
+      return;
+    }
+    sendJson(res, 200, this.wireList(name, list));
   }
 
   private setState(state: string): void {

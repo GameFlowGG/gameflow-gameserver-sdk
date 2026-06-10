@@ -78,6 +78,7 @@ const sidecar = await startFakeSidecar([
 try {
   const code = await runGodot('res://test/sidecar_test.gd', {
     AGONES_SDK_HTTP_PORT: String(sidecar.port),
+    GF_TEST_CONTROL_PORT: String(sidecar.controlPort),
     GAMEFLOW_SDK_MODE: '',
   });
   if (code !== 0) failures++;
