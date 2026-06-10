@@ -1,0 +1,62 @@
+{
+  "name": "@gameflow/gameserver-sdk",
+  "version": "0.1.0",
+  "description": "Official GameFlow game server SDK for Node.js. Lifecycle, health and player tracking for dedicated game servers.",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GameFlowGG/gameflow-gameserver-sdk.git",
+    "directory": "sdk/typescript"
+  },
+  "homepage": "https://docs.gameflow.gg",
+  "keywords": [
+    "gameflow",
+    "game-server",
+    "dedicated-server",
+    "multiplayer",
+    "player-tracking"
+  ],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18.17.0"
+  },
+  "packageManager": "pnpm@10.29.3",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "fmt": "prettier --write .",
+    "fmt:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "prettier": "^3.5.0",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.0",
+    "vitest": "^3.2.0"
+  }
+}
