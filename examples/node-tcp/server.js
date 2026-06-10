@@ -4,7 +4,7 @@
 import { createServer } from 'node:net';
 import { randomUUID } from 'node:crypto';
 
-import { GameFlow, ServerFullError } from '@gameflow/gameserver-sdk';
+import { GameFlow, ServerFullError } from '@gameflow.gg/gameserver-sdk';
 
 const gf = await GameFlow.connect();
 console.log(`[server] mode=${gf.mode} region=${gf.region ?? '-'} build=${gf.buildId ?? '-'}`);

@@ -1,11 +1,11 @@
 # Getting started
 
-This guide integrates a Node.js dedicated server with GameFlow using `@gameflow/gameserver-sdk`. The full working example lives in [`examples/node-tcp`](../examples/node-tcp).
+This guide integrates a Node.js dedicated server with GameFlow using `@gameflow.gg/gameserver-sdk`. The full working example lives in [`examples/node-tcp`](../examples/node-tcp).
 
 ## 1. Install
 
 ```bash
-npm install @gameflow/gameserver-sdk
+npm install @gameflow.gg/gameserver-sdk
 ```
 
 Requires Node 18.17 or newer. The SDK has zero runtime dependencies.
@@ -13,7 +13,7 @@ Requires Node 18.17 or newer. The SDK has zero runtime dependencies.
 ## 2. Connect and signal readiness
 
 ```ts
-import { GameFlow } from '@gameflow/gameserver-sdk';
+import { GameFlow } from '@gameflow.gg/gameserver-sdk';
 
 const gf = await GameFlow.connect();
 

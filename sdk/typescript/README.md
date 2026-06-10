@@ -1,15 +1,15 @@
-# @gameflow/gameserver-sdk
+# @gameflow.gg/gameserver-sdk
 
 Official [GameFlow](https://gameflow.gg) SDK for Node.js game servers: server lifecycle, automatic health reporting and player tracking. Zero runtime dependencies, Node 18.17+.
 
 ```bash
-npm install @gameflow/gameserver-sdk
+npm install @gameflow.gg/gameserver-sdk
 ```
 
 ## Quickstart
 
 ```ts
-import { GameFlow, ServerFullError } from '@gameflow/gameserver-sdk';
+import { GameFlow, ServerFullError } from '@gameflow.gg/gameserver-sdk';
 
 const gf = await GameFlow.connect();
 

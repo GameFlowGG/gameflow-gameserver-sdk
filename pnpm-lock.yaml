@@ -14,7 +14,7 @@ importers:
 
   examples/node-tcp:
     dependencies:
-      '@gameflow/gameserver-sdk':
+      '@gameflow.gg/gameserver-sdk':
         specifier: workspace:*
         version: link:../../sdk/typescript
 

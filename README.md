@@ -3,7 +3,7 @@
 Official SDKs for integrating dedicated game servers with [GameFlow](https://gameflow.gg): server lifecycle, automatic health reporting and player tracking.
 
 ```ts
-import { GameFlow } from '@gameflow/gameserver-sdk';
+import { GameFlow } from '@gameflow.gg/gameserver-sdk';
 
 const gf = await GameFlow.connect();
 await gf.ready(); // health reporting starts automatically
@@ -16,15 +16,15 @@ await gf.shutdown(); // when the match ends
 
 ## SDKs
 
-| Language   | Package                                      | Status | Version |
-| ---------- | -------------------------------------------- | ------ | ------- |
-| TypeScript | [`@gameflow/gameserver-sdk`](sdk/typescript) | Stable | 0.1.0   |
-| Unity      | Planned                                      |        |         |
-| Unreal     | Planned                                      |        |         |
-| Godot      | Planned                                      |        |         |
-| Rust       | Planned                                      |        |         |
-| Go         | Planned                                      |        |         |
-| Python     | Planned                                      |        |         |
+| Language   | Package                                         | Status | Version |
+| ---------- | ----------------------------------------------- | ------ | ------- |
+| TypeScript | [`@gameflow.gg/gameserver-sdk`](sdk/typescript) | Stable | 0.1.0   |
+| Unity      | Planned                                         |        |         |
+| Unreal     | Planned                                         |        |         |
+| Godot      | Planned                                         |        |         |
+| Rust       | Planned                                         |        |         |
+| Go         | Planned                                         |        |         |
+| Python     | Planned                                         |        |         |
 
 ## Why an SDK?
 
@@ -41,7 +41,7 @@ Servers hosted on GameFlow report readiness, health and connected players to the
 
 ```
 proto/gameflow/sdk/v1/   Canonical cross-language API contract
-sdk/typescript/          TypeScript SDK (@gameflow/gameserver-sdk)
+sdk/typescript/          TypeScript SDK (@gameflow.gg/gameserver-sdk)
 examples/node-tcp/       Minimal TCP server using the SDK
 docs/                    Guides and the SDK behavioral spec
 ```

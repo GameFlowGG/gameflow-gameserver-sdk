@@ -14,12 +14,12 @@ tasks:
   build:
     desc: Build the TypeScript SDK
     cmds:
-      - pnpm --filter @gameflow/gameserver-sdk build
+      - pnpm --filter @gameflow.gg/gameserver-sdk build
 
   test:
     desc: Run TypeScript SDK tests
     cmds:
-      - pnpm --filter @gameflow/gameserver-sdk test
+      - pnpm --filter @gameflow.gg/gameserver-sdk test
 
   ci:proto:
     desc: Lint and format-check proto files
@@ -32,6 +32,6 @@ tasks:
     cmds:
       - pnpm install --frozen-lockfile
       - pnpm prettier --check .
-      - pnpm --filter @gameflow/gameserver-sdk typecheck
-      - pnpm --filter @gameflow/gameserver-sdk build
-      - pnpm --filter @gameflow/gameserver-sdk test
+      - pnpm --filter @gameflow.gg/gameserver-sdk typecheck
+      - pnpm --filter @gameflow.gg/gameserver-sdk build
+      - pnpm --filter @gameflow.gg/gameserver-sdk test

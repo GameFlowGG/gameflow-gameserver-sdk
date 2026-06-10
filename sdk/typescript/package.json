@@ -1,5 +1,5 @@
 {
-  "name": "@gameflow/gameserver-sdk",
+  "name": "@gameflow.gg/gameserver-sdk",
   "version": "0.1.0",
   "description": "Official GameFlow game server SDK for Node.js. Lifecycle, health and player tracking for dedicated game servers.",
   "license": "Apache-2.0",

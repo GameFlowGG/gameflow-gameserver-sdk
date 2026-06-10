@@ -3,7 +3,7 @@ FROM node:24-alpine
 
 WORKDIR /app
 COPY package.json server.js ./
-# In a real project: `npm install @gameflow/gameserver-sdk` (this example uses
+# In a real project: `npm install @gameflow.gg/gameserver-sdk` (this example uses
 # the workspace copy, baked in by the build context below).
 COPY node_modules ./node_modules
 

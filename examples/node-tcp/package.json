@@ -11,6 +11,6 @@
     "node": ">=18.17.0"
   },
   "dependencies": {
-    "@gameflow/gameserver-sdk": "workspace:*"
+    "@gameflow.gg/gameserver-sdk": "workspace:*"
   }
 }
