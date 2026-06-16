@@ -12,12 +12,6 @@ importers:
         specifier: ^3.5.0
         version: 3.8.4
 
-  examples/node-tcp:
-    dependencies:
-      '@gameflow.gg/gameserver-sdk':
-        specifier: workspace:*
-        version: link:../../sdk/typescript
-
   sdk/typescript:
     devDependencies:
       '@types/node':
@@ -35,6 +29,12 @@ importers:
       vitest:
         specifier: ^3.2.0
         version: 3.2.6(@types/node@24.13.1)
+
+  sdk/typescript/examples/node-tcp:
+    dependencies:
+      '@gameflow.gg/gameserver-sdk':
+        specifier: workspace:*
+        version: link:../..
 
 packages:
 

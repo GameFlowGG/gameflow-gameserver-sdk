@@ -11,6 +11,6 @@ target/
 sdk/rust/target/
 
 # Go
+go.work
 go.work.sum
-examples/go-gameserver/go-gameserver
-examples/go-gameserver/gameflow-go-gameserver
+sdk/go/examples/tcp-server/tcp-server

@@ -1,6 +1,0 @@
-# Keep the build context tiny: only go.mod, go.sum and the Go sources are needed.
-README.md
-Dockerfile
-.dockerignore
-inject-players.mjs
-*.zip

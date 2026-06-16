@@ -31,7 +31,7 @@ async fn main() -> gameflow::Result<()> {
 sdk/rust/
   gameflow/                 The SDK crate: gameflow-gameserver-sdk (lib `gameflow`)
   examples/
-    tokio-tcp/              Minimal tokio TCP server (twin of examples/node-tcp)
+    tokio-tcp/              Minimal tokio TCP server (twin of the TS node-tcp example)
     bevy-server/            Headless Bevy dedicated server
 ```
 

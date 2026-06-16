@@ -75,7 +75,7 @@ Simulation knobs (env vars, only read in local mode):
 
 ## Example
 
-[`example/tcp_server.gd`](example/tcp_server.gd) is a minimal TCP server (the Godot twin of `examples/node-tcp`):
+[`example/tcp_server.gd`](example/tcp_server.gd) is a minimal TCP server (the Godot twin of the TS node-tcp example):
 
 ```bash
 godot --headless --path sdk/godot --script res://example/tcp_server.gd

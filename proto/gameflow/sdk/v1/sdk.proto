@@ -6,7 +6,7 @@ package gameflow.sdk.v1;
 //
 // In v1 this file is a specification, not a wire protocol: SDK implementations
 // transport these semantics over the local GameFlow runtime's REST API. Every
-// SDK (TypeScript, Unity, Unreal, Godot, Rust, Go, Python) must expose this
+// SDK (TypeScript, Unity, Unreal, Godot, Rust, Go) must expose this
 // surface with naming adapted to its language idiom. Behavioral requirements
 // that protobuf cannot capture (health cadence, retry parameters, local mode,
 // stable error codes) live in docs/spec.md.

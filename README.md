@@ -1,34 +1,49 @@
 # GameFlow Game Server SDK
 
-Official SDKs for integrating dedicated game servers with [GameFlow](https://gameflow.gg): server lifecycle, automatic health reporting and player tracking.
+Official SDKs for integrating dedicated game servers with [GameFlow](https://gameflow.gg).
+One small library per language that handles the server side of hosting on GameFlow —
+**lifecycle, automatic health reporting and player tracking** — plus a **local mode** so
+the same build runs on your machine with zero configuration.
 
-```ts
-import { GameFlow } from '@gameflow.gg/gameserver-sdk';
+## What it does
 
-const gf = await GameFlow.connect();
-await gf.ready(); // health reporting starts automatically
+Every SDK exposes the same lifecycle, adapted to each language's idioms:
 
-gf.players.connect(sessionId); // when a player joins
-gf.players.disconnect(sessionId); // when a player leaves
+1. **Connect** — attach to the GameFlow runtime (or local mode off-platform), with retries.
+2. **Ready** — mark the server ready to accept players; the SDK then sends health
+   heartbeats automatically.
+3. **Track players** — register and unregister sessions as players join and leave, so the
+   platform sees accurate player counts.
+4. **Shutdown** — cleanly end the server when the match is over.
 
-await gf.shutdown(); // when the match ends
-```
+The SDK owns the fiddly parts you'd otherwise build yourself: health heartbeats, connect
+retries and backoff, a shared server-update stream, and a local mode for off-platform
+development. See each SDK's README for a language-specific quickstart.
 
 ## SDKs
 
 | Language   | Package                                         | Status | Version |
 | ---------- | ----------------------------------------------- | ------ | ------- |
-| TypeScript | [`@gameflow.gg/gameserver-sdk`](sdk/typescript) | Stable | 0.1.0   |
-| Godot      | [`gameflow` addon](sdk/godot)                   | Beta   | 0.1.0   |
+| TypeScript | [`@gameflow.gg/gameserver-sdk`](sdk/typescript) | Stable | 0.1.2   |
+| Godot      | [`gameflow` addon](sdk/godot)                   | Beta   | 0.1.2   |
 | Rust       | [`gameflow-gameserver-sdk`](sdk/rust)           | Beta   | 0.1.0   |
 | Go         | [`gameflow-gameserver-sdk/sdk/go`](sdk/go)      | Beta   | 0.1.0   |
-| Unity      | Planned                                         |        |         |
-| Unreal     | Planned                                         |        |         |
-| Python     | Planned                                         |        |         |
+| Unity      | Planned                                         | —      | —       |
+| Unreal     | Planned                                         | —      | —       |
 
-## Why an SDK?
+## How it works
 
-Servers hosted on GameFlow report readiness, health and connected players to the platform. The SDK handles all of it with a few calls, including details you would otherwise own yourself: health heartbeats, retries, and a local mode so your server runs on your machine with zero configuration.
+All SDKs implement one cross-language contract, so behavior is identical no matter the
+language:
+
+- [`proto/gameflow/sdk/v1`](proto/gameflow/sdk/v1) — the canonical API surface.
+- [`docs/spec.md`](docs/spec.md) — the behavior protobuf can't capture (health cadence,
+  retry parameters, local mode, stable error codes).
+- [`tools/conformance`](tools/conformance) — a fake-runtime fixture that every SDK's test
+  suite runs against, keeping the implementations honest.
+
+Transport is an implementation detail: in v1 each SDK talks REST to the local GameFlow
+runtime, and simulates that runtime in local mode.
 
 ## Documentation
 
@@ -43,27 +58,33 @@ Servers hosted on GameFlow report readiness, health and connected players to the
 proto/gameflow/sdk/v1/   Canonical cross-language API contract
 sdk/typescript/          TypeScript SDK (@gameflow.gg/gameserver-sdk)
 sdk/godot/               Godot 4 SDK (GDScript addon)
-sdk/rust/                Rust SDK (gameflow-gameserver-sdk + gameflow-bevy plugin)
+sdk/rust/                Rust SDK (gameflow-gameserver-sdk)
 sdk/go/                  Go SDK (stdlib-only, engine-agnostic)
-examples/node-tcp/       Minimal TCP server using the SDK
-examples/rust-gameserver/  Deployable Rust dedicated server
-examples/go-gameserver/  Deployable Go dedicated server
 docs/                    Guides and the SDK behavioral spec
 tools/conformance/       Fake runtime fixture shared by every SDK test suite
 ```
 
+Each SDK keeps its runnable examples under its own directory — `sdk/typescript/examples/`,
+`sdk/rust/examples/`, `sdk/godot/example/`, `sdk/go/examples/`.
+
 ## Development
 
-Requires Node 24 (`.nvmrc`), pnpm 10 and [Task](https://taskfile.dev).
+Each SDK builds and tests independently via [Task](https://taskfile.dev):
 
 ```bash
-task install   # pnpm install
-task test      # SDK test suite
-task ci:sdk    # full CI pipeline (format, typecheck, build, test)
-task ci:proto  # buf lint + format check
+task install      # install JS workspace deps (pnpm)
+task ci:sdk       # TypeScript SDK CI (format, typecheck, build, test)
+task ci:go        # Go SDK CI         (also: task test:go)
+task ci:rust      # Rust SDK CI       (also: task test:rust)
+task test:godot   # Godot SDK tests
+task ci:proto     # buf lint + format check
 ```
 
-Releases are tagged per SDK (`typescript-v0.1.0`) and published from the release workflow.
+The Go and Rust suites need their toolchains; the conformance tests need Node.
+
+Releases are tagged per SDK from the release workflow — `typescript-v0.1.2`,
+`godot-v0.1.2`, `rust-v0.1.0`, and `sdk/go/v0.1.0` (the Go module lives in a
+subdirectory, so its tag is path-prefixed for `go get`).
 
 ## License
 

@@ -72,6 +72,17 @@ Local mode simulates the runtime: `GAMEFLOW_MAX_PLAYERS` sets the players-list
 capacity (unset = unlimited, `0` = tracking disabled) and `GAMEFLOW_PAYLOAD`
 simulates the launch payload.
 
+## Example
+
+[`examples/tcp-server`](examples/tcp-server) is a minimal TCP line-chat where every
+connection is one tracked player — the Go twin of the TypeScript node-tcp example. Run it
+in local mode:
+
+```bash
+GAMEFLOW_MAX_PLAYERS=10 go run ./examples/tcp-server
+# then, in another terminal: nc 127.0.0.1 7777
+```
+
 ## Development
 
 Requires Go 1.23+. Node is needed only for the conformance test, which drives the

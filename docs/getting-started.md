@@ -1,6 +1,6 @@
 # Getting started
 
-This guide integrates a Node.js dedicated server with GameFlow using `@gameflow.gg/gameserver-sdk`. The full working example lives in [`examples/node-tcp`](../examples/node-tcp).
+This guide integrates a Node.js dedicated server with GameFlow using `@gameflow.gg/gameserver-sdk`. The full working example lives in [`sdk/typescript/examples/node-tcp`](../sdk/typescript/examples/node-tcp).
 
 ## 1. Install
 
@@ -75,6 +75,6 @@ When a server is stopped, the platform sends SIGTERM and force-kills the contain
 
 ## 6. Ship it
 
-Package your server with a Dockerfile at the build root (run as UID 1000, expose your port) and upload it through the GameFlow dashboard or CLI. See [Creating a Game](https://docs.gameflow.gg/dashboard/creating-a-game) and the [example Dockerfile](../examples/node-tcp/Dockerfile).
+Package your server with a Dockerfile at the build root (run as UID 1000, expose your port) and upload it through the GameFlow dashboard or CLI. See [Creating a Game](https://docs.gameflow.gg/dashboard/creating-a-game) and the [example Dockerfile](../sdk/typescript/examples/node-tcp/Dockerfile).
 
 To test everything locally first, see [Local development](local-development.md).

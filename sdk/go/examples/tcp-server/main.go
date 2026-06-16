@@ -1,13 +1,14 @@
-// A minimal production-ready GameFlow dedicated server, in Go.
+// A minimal GameFlow game server: a TCP line-chat built only on the standard
+// library and the GameFlow SDK. The Go twin of the TypeScript node-tcp example.
 //
-// It is a TCP line-chat: every TCP connection counts as one tracked player, so
-// you can watch the player count climb in the GameFlow dashboard as clients
-// join. Built only on the standard library plus the GameFlow SDK.
+// Every TCP connection is one tracked player, so the player count climbs in the
+// GameFlow dashboard as clients join. The same binary runs on GameFlow (sidecar
+// mode, auto-detected) and on your machine (local mode, zero config).
 //
-// On GameFlow the SDK auto-detects sidecar mode; off-platform it falls back to
-// local mode so you can run the exact same binary on your machine with zero
-// configuration. Connect with `nc <host> <port>` and type lines. Commands:
-// /who lists connected players, /quit disconnects.
+// Run it locally, then connect with `nc 127.0.0.1 7777` and type lines.
+// Commands: /who lists players, /quit disconnects.
+//
+//	GAMEFLOW_MAX_PLAYERS=10 go run ./examples/tcp-server
 package main
 
 import (
@@ -30,12 +31,10 @@ var nextSession atomic.Uint64
 
 func main() {
 	// Stop on the first OS shutdown signal. GameFlow stops servers with SIGTERM;
-	// locally you'll usually hit Ctrl-C (SIGINT). Both lead to a graceful
-	// shutdown.
+	// locally you'll usually hit Ctrl-C (SIGINT).
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGTERM, syscall.SIGINT)
 	defer stop()
 
-	// Connect to the GameFlow runtime (with retries) or local mode off-platform.
 	gf, err := gameflow.Connect(ctx)
 	if err != nil {
 		log.Fatalf("gameflow: connect failed: %v", err)
@@ -47,17 +46,16 @@ func main() {
 	if payload, present, err := gf.Payload(ctx); err == nil && present {
 		log.Printf("gameflow: launch payload: %s", payload)
 	}
-	// Keep the subscription alive for the whole process.
-	payloadSub, _ := gf.OnPayloadChange(func(payload string, present bool) {
+	sub, _ := gf.OnPayloadChange(func(payload string, present bool) {
 		if present {
 			log.Printf("gameflow: payload changed: %s", payload)
 		} else {
 			log.Printf("gameflow: payload cleared")
 		}
 	})
-	defer payloadSub.Unsubscribe()
+	defer sub.Unsubscribe()
 
-	// Listen on the platform-assigned port. Bind 0.0.0.0 so the server is
+	// Listen on the platform-assigned port, bound to 0.0.0.0 so the server is
 	// reachable from outside the container.
 	port := uint16(7777)
 	if p, ok := gf.Ports().Default(); ok {
@@ -69,28 +67,24 @@ func main() {
 	}
 	defer listener.Close()
 
-	// Only signal ready once we can actually accept connections. Health
-	// heartbeats start automatically from here — you never ping anything.
+	// Only signal ready once we can accept connections. Health heartbeats start
+	// automatically from here — you never ping anything.
 	if err := gf.Ready(ctx); err != nil {
 		log.Fatalf("gameflow: ready failed: %v", err)
 	}
 	log.Printf("listening on 0.0.0.0:%d (capacity: %d)", port, gf.Players().Capacity())
 
 	hub := &hub{conns: make(map[net.Conn]struct{})}
-
-	// Close the listener when the context is cancelled so the accept loop exits.
 	go func() {
 		<-ctx.Done()
 		listener.Close()
 	}()
-
 	acceptLoop(ctx, listener, gf, hub)
 
 	// The platform sends SIGTERM and force-kills the container ~45s later, so
 	// shut down cleanly well within that budget.
 	log.Println("shutting down")
 	hub.closeAll()
-	// Use a fresh context: the signal already cancelled the one above.
 	if err := gf.Shutdown(context.Background()); err != nil {
 		log.Printf("gameflow: shutdown error: %v", err)
 	}
@@ -101,11 +95,7 @@ func acceptLoop(ctx context.Context, listener net.Listener, gf *gameflow.GameFlo
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			if ctx.Err() != nil {
-				return // listener closed during shutdown
-			}
-			log.Printf("accept error: %v", err)
-			return
+			return // listener closed during shutdown
 		}
 		go handleConnection(ctx, conn, gf, hub)
 	}
@@ -136,8 +126,7 @@ func handleConnection(ctx context.Context, conn net.Conn, gf *gameflow.GameFlow,
 
 	scanner := bufio.NewScanner(conn)
 	for scanner.Scan() {
-		line := scanner.Text()
-		switch line {
+		switch line := scanner.Text(); line {
 		case "/quit":
 			fmt.Fprint(conn, "bye\n")
 			goto leave
@@ -153,14 +142,12 @@ leave:
 	conn.Close()
 	// Unregister on disconnect (idempotent). Use a fresh context so a player
 	// leaving during shutdown is still recorded.
-	if _, err := gf.Players().Disconnect(context.Background(), sessionID); err != nil {
-		// NOT_CONNECTED simply means we're already shutting down.
-		if !errors.Is(err, gameflow.ErrNotConnected) {
-			log.Printf("disconnect failed for %s: %v", sessionID, err)
-		}
-		return
+	if _, err := gf.Players().Disconnect(context.Background(), sessionID); err != nil &&
+		!errors.Is(err, gameflow.ErrNotConnected) {
+		log.Printf("disconnect failed for %s: %v", sessionID, err)
+	} else {
+		log.Printf("player left: %s (now %d connected)", sessionID, gf.Players().Count())
 	}
-	log.Printf("player left: %s (now %d connected)", sessionID, gf.Players().Count())
 }
 
 // hub is a tiny broadcast registry of connected sockets.

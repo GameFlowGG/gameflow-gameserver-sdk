@@ -1,5 +1,5 @@
 //! Minimal GameFlow game server: a TCP line-chat built on `tokio::net` and the
-//! GameFlow SDK. The Rust twin of `examples/node-tcp`. Connect with
+//! GameFlow SDK. The Rust twin of the TS node-tcp example. Connect with
 //! `nc <host> <port>` and type lines. Commands: `/who` lists players, `/quit`
 //! disconnects.
 

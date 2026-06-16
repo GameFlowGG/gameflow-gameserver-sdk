@@ -37,7 +37,7 @@ node server.js
 
 ```bash
 pnpm install
-node examples/node-tcp/server.js
+node sdk/typescript/examples/node-tcp/server.js
 # in another terminal:
 nc 127.0.0.1 7777
 ```
