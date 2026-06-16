@@ -26,6 +26,12 @@ tasks:
     cmds:
       - node sdk/godot/test/run.mjs
 
+  test:rust:
+    desc: Run Rust SDK tests (requires a Rust toolchain; Node for conformance)
+    dir: sdk/rust
+    cmds:
+      - cargo test --workspace
+
   ci:proto:
     desc: Lint and format-check proto files
     cmds:
@@ -40,3 +46,12 @@ tasks:
       - pnpm --filter @gameflow.gg/gameserver-sdk typecheck
       - pnpm --filter @gameflow.gg/gameserver-sdk build
       - pnpm --filter @gameflow.gg/gameserver-sdk test
+
+  ci:rust:
+    desc: Full Rust SDK CI pipeline
+    dir: sdk/rust
+    cmds:
+      - cargo fmt --check
+      - cargo clippy --workspace --all-targets -- -D warnings
+      - cargo build --workspace
+      - cargo test --workspace

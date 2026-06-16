@@ -1,0 +1,12 @@
+[package]
+name = "gameflow-example-tokio-tcp"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+gameflow-gameserver-sdk = { workspace = true }
+tokio = { version = "1.45", features = ["rt-multi-thread", "macros", "net", "io-util", "signal", "sync", "time"] }
+tracing = { workspace = true }
+tracing-subscriber = "0.3"

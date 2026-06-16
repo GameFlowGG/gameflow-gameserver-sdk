@@ -1,0 +1,15 @@
+[package]
+name = "gameflow-example-bevy-server"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+# A headless Bevy dedicated server. The reusable Bevy bridge lives in
+# src/gameflow_plugin.rs — copy that file into your own project. Its only
+# dependencies are the four below; it compiles against your Bevy version.
+[dependencies]
+gameflow-gameserver-sdk = { workspace = true }
+bevy = { version = "0.18", default-features = false, features = ["std", "bevy_log", "multi_threaded"] }
+tokio = { version = "1.45", default-features = false, features = ["rt", "rt-multi-thread"] }
+crossbeam-channel = { workspace = true }

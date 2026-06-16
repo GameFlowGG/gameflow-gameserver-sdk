@@ -1,0 +1,33 @@
+[package]
+name = "gameflow-gameserver-sdk"
+description = "Official GameFlow SDK for dedicated game servers: lifecycle, automatic health reporting and player tracking."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+authors.workspace = true
+readme = "README.md"
+keywords = ["gameflow", "game-server", "dedicated-server", "multiplayer", "gamedev"]
+categories = ["game-development", "api-bindings", "asynchronous"]
+# Ship only what the published crate needs. tests/ is intentionally excluded:
+# the conformance test drives an external Node fixture (tools/conformance/) that
+# does not exist in the packaged crate.
+include = ["src/**/*", "README.md"]
+
+[lib]
+name = "gameflow"
+
+[dependencies]
+tokio = { workspace = true }
+tokio-util = { workspace = true }
+reqwest = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+futures-util = { workspace = true }
+async-trait = { workspace = true }
+tracing = { workspace = true }
+
+[dev-dependencies]
+tokio = { version = "1.45", features = ["rt-multi-thread", "macros", "time", "sync"] }

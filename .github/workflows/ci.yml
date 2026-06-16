@@ -75,3 +75,32 @@ jobs:
 
       - name: Godot SDK tests
         run: node sdk/godot/test/run.mjs
+
+  rust:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Cache cargo build
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: sdk/rust
+
+      - name: Set up Node.js
+        # Needed by the Rust conformance test (drives tools/conformance).
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Install Task
+        uses: arduino/setup-task@v2
+
+      - name: Rust SDK CI
+        run: task ci:rust
