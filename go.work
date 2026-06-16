@@ -1,0 +1,10 @@
+// Repo-local Go workspace: resolves the example's dependency on the SDK from
+// source (./sdk/go) so the monorepo builds and runs without the SDK being
+// published. Tooling and CI for the SDK itself run inside sdk/go and ignore
+// this; the deploy Dockerfile (built from the example dir alone) does too.
+go 1.23
+
+use (
+	./examples/go-gameserver
+	./sdk/go
+)

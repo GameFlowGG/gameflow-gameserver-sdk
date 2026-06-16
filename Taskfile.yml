@@ -32,6 +32,14 @@ tasks:
     cmds:
       - cargo test --workspace
 
+  test:go:
+    desc: Run Go SDK tests (requires a Go toolchain; Node for conformance)
+    dir: sdk/go
+    env:
+      GOWORK: off # build the SDK in isolation, as a published consumer would
+    cmds:
+      - go test -race ./...
+
   ci:proto:
     desc: Lint and format-check proto files
     cmds:
@@ -55,3 +63,14 @@ tasks:
       - cargo clippy --workspace --all-targets -- -D warnings
       - cargo build --workspace
       - cargo test --workspace
+
+  ci:go:
+    desc: Full Go SDK CI pipeline
+    dir: sdk/go
+    env:
+      GOWORK: off # build the SDK in isolation, as a published consumer would
+    cmds:
+      - test -z "$(gofmt -l .)" || (echo 'gofmt needed:'; gofmt -l .; exit 1)
+      - go vet ./...
+      - go build ./...
+      - go test -race ./...

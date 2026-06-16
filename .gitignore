@@ -9,3 +9,8 @@ coverage/
 # Rust
 target/
 sdk/rust/target/
+
+# Go
+go.work.sum
+examples/go-gameserver/go-gameserver
+examples/go-gameserver/gameflow-go-gameserver

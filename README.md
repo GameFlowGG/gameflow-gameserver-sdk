@@ -21,9 +21,9 @@ await gf.shutdown(); // when the match ends
 | TypeScript | [`@gameflow.gg/gameserver-sdk`](sdk/typescript) | Stable | 0.1.0   |
 | Godot      | [`gameflow` addon](sdk/godot)                   | Beta   | 0.1.0   |
 | Rust       | [`gameflow-gameserver-sdk`](sdk/rust)           | Beta   | 0.1.0   |
+| Go         | [`gameflow-gameserver-sdk/sdk/go`](sdk/go)      | Beta   | 0.1.0   |
 | Unity      | Planned                                         |        |         |
 | Unreal     | Planned                                         |        |         |
-| Go         | Planned                                         |        |         |
 | Python     | Planned                                         |        |         |
 
 ## Why an SDK?
@@ -44,7 +44,10 @@ proto/gameflow/sdk/v1/   Canonical cross-language API contract
 sdk/typescript/          TypeScript SDK (@gameflow.gg/gameserver-sdk)
 sdk/godot/               Godot 4 SDK (GDScript addon)
 sdk/rust/                Rust SDK (gameflow-gameserver-sdk + gameflow-bevy plugin)
+sdk/go/                  Go SDK (stdlib-only, engine-agnostic)
 examples/node-tcp/       Minimal TCP server using the SDK
+examples/rust-gameserver/  Deployable Rust dedicated server
+examples/go-gameserver/  Deployable Go dedicated server
 docs/                    Guides and the SDK behavioral spec
 tools/conformance/       Fake runtime fixture shared by every SDK test suite
 ```
