@@ -47,7 +47,7 @@ itself is engine-agnostic, so instead the Bevy integration ships as a
 Copy that file into your project and you get a `GameFlowPlugin` (with its own
 tokio runtime — reqwest can't run on Bevy's task pools), a `GameFlowClient`
 resource, and ECS messages/events. Because it lives in your crate, it compiles
-against *your* Bevy version. See [`examples/bevy-server`](examples/bevy-server)
+against _your_ Bevy version. See [`examples/bevy-server`](examples/bevy-server)
 for the full app.
 
 ## Development
