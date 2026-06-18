@@ -1,0 +1,12 @@
+{
+  "name": "GameFlow.Core",
+  "rootNamespace": "GameFlow",
+  "references": [],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "noEngineReferences": true
+}

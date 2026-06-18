@@ -28,7 +28,7 @@ development. See each SDK's README for a language-specific quickstart.
 | Godot      | [`gameflow` addon](sdk/godot)                   | Beta   | 0.1.2   |
 | Rust       | [`gameflow-gameserver-sdk`](sdk/rust)           | Beta   | 0.1.0   |
 | Go         | [`gameflow-gameserver-sdk/sdk/go`](sdk/go)      | Beta   | 0.1.0   |
-| Unity      | Planned                                         | —      | —       |
+| Unity      | [`gg.gameflow.gameserver`](sdk/unity)           | Beta   | 0.1.0   |
 | Unreal     | Planned                                         | —      | —       |
 
 ## How it works
@@ -60,12 +60,14 @@ sdk/typescript/          TypeScript SDK (@gameflow.gg/gameserver-sdk)
 sdk/godot/               Godot 4 SDK (GDScript addon)
 sdk/rust/                Rust SDK (gameflow-gameserver-sdk)
 sdk/go/                  Go SDK (stdlib-only, engine-agnostic)
+sdk/unity/               Unity 2022.3+ SDK (pure C# core + thin Unity layer)
 docs/                    Guides and the SDK behavioral spec
 tools/conformance/       Fake runtime fixture shared by every SDK test suite
 ```
 
 Each SDK keeps its runnable examples under its own directory — `sdk/typescript/examples/`,
-`sdk/rust/examples/`, `sdk/godot/example/`, `sdk/go/examples/`.
+`sdk/rust/examples/`, `sdk/godot/example/`, `sdk/go/examples/`, and the Unity package's
+`Samples~/`.
 
 ## Development
 
@@ -76,15 +78,17 @@ task install      # install JS workspace deps (pnpm)
 task ci:sdk       # TypeScript SDK CI (format, typecheck, build, test)
 task ci:go        # Go SDK CI         (also: task test:go)
 task ci:rust      # Rust SDK CI       (also: task test:rust)
+task ci:unity     # Unity SDK CI      (also: task test:unity)
 task test:godot   # Godot SDK tests
 task ci:proto     # buf lint + format check
 ```
 
-The Go and Rust suites need their toolchains; the conformance tests need Node.
+The Go and Rust suites need their toolchains, the Unity suite needs a .NET SDK, and the
+conformance tests need Node.
 
 Releases are tagged per SDK from the release workflow — `typescript-v0.1.2`,
-`godot-v0.1.2`, `rust-v0.1.0`, and `sdk/go/v0.1.0` (the Go module lives in a
-subdirectory, so its tag is path-prefixed for `go get`).
+`godot-v0.1.2`, `rust-v0.1.0`, `sdk/go/v0.1.0`, and `sdk/unity/v0.1.0` (the Go and Unity
+packages live in subdirectories, so their tags are path-prefixed for consumers).
 
 ## License
 

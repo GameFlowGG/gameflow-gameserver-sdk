@@ -14,3 +14,9 @@ sdk/rust/target/
 go.work
 go.work.sum
 sdk/go/examples/tcp-server/tcp-server
+
+# .NET / Unity SDK
+sdk/unity/tests/bin/
+sdk/unity/tests/obj/
+sdk/unity/tests/**/bin/
+sdk/unity/tests/**/obj/

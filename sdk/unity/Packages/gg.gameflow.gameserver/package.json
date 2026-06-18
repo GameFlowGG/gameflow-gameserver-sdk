@@ -1,0 +1,28 @@
+{
+  "name": "gg.gameflow.gameserver",
+  "version": "0.1.0",
+  "displayName": "GameFlow Game Server SDK",
+  "description": "Integrate Unity dedicated game servers with GameFlow: lifecycle, automatic health reporting, and player tracking.",
+  "unity": "2022.3",
+  "license": "Apache-2.0",
+  "documentationUrl": "https://docs.gameflow.gg",
+  "changelogUrl": "https://github.com/GameFlowGG/gameflow-gameserver-sdk/blob/main/sdk/unity/Packages/gg.gameflow.gameserver/CHANGELOG.md",
+  "licensesUrl": "https://github.com/GameFlowGG/gameflow-gameserver-sdk/blob/main/LICENSE",
+  "keywords": [
+    "gameflow",
+    "dedicated-server",
+    "multiplayer",
+    "gameserver"
+  ],
+  "author": {
+    "name": "GameFlow",
+    "url": "https://gameflow.gg"
+  },
+  "samples": [
+    {
+      "displayName": "Dedicated Server",
+      "description": "Minimal headless server bootstrap (start, ready, track players, shutdown).",
+      "path": "Samples~/DedicatedServer"
+    }
+  ]
+}
