@@ -31,6 +31,11 @@ public sealed class GameFlowTcpServer : MonoBehaviour
         // Headless servers don't render: cap the loop so we don't peg a CPU core.
         Application.targetFrameRate = 30;
 
+        // Unity attaches a full async stack trace to every Debug.Log by default, which buries
+        // the actual messages in container stdout. Keep Info/Warning clean; keep stacks on errors.
+        Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
+        Application.SetStackTraceLogType(LogType.Warning, StackTraceLogType.None);
+
         // The runner pumps SDK callbacks onto the main thread and sends a clean
         // shutdown when the process quits (SIGTERM on GameFlow, or Stop in the editor).
         var runner = GameFlowRunner.Create();
