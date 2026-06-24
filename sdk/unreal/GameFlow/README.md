@@ -52,9 +52,7 @@ Or add to your `.uproject`:
 
 ```json
 {
-  "Plugins": [
-    { "Name": "GameFlow", "Enabled": true }
-  ]
+  "Plugins": [{ "Name": "GameFlow", "Enabled": true }]
 }
 ```
 
@@ -110,33 +108,33 @@ a complete, copyable `AGameModeBase` subclass that shows the full pattern.
 
 All lifecycle methods accept a completion delegate that fires on the game thread.
 
-| Method                                              | Description                                                                        |
-| --------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `Start(FGfVoidResult)`                              | Connect to the runtime with retries, or fall back to local mode.                  |
-| `Ready(FGfVoidResult)`                              | Mark the server ready; starts the health heartbeat in sidecar mode.               |
-| `Shutdown(FGfVoidResult)`                           | End the match. Idempotent; afterwards calls return `NOT_CONNECTED`.               |
-| `GetPayload(FGfPayloadResult)`                      | Fetch the opaque launch payload string (empty when none).                         |
-| `GetInfo(FGfInfoResult)`                            | Fetch the current `FServerInfo` snapshot.                                         |
-| `ConnectPlayer(SessionId, FGfVoidResult)`           | Register a player session. Errors: `SERVER_FULL`, `PLAYER_ALREADY_CONNECTED`.    |
-| `DisconnectPlayer(SessionId, FGfRemoveResult)`      | Remove a player session. Idempotent.                                              |
+| Method                                         | Description                                                                   |
+| ---------------------------------------------- | ----------------------------------------------------------------------------- |
+| `Start(FGfVoidResult)`                         | Connect to the runtime with retries, or fall back to local mode.              |
+| `Ready(FGfVoidResult)`                         | Mark the server ready; starts the health heartbeat in sidecar mode.           |
+| `Shutdown(FGfVoidResult)`                      | End the match. Idempotent; afterwards calls return `NOT_CONNECTED`.           |
+| `GetPayload(FGfPayloadResult)`                 | Fetch the opaque launch payload string (empty when none).                     |
+| `GetInfo(FGfInfoResult)`                       | Fetch the current `FServerInfo` snapshot.                                     |
+| `ConnectPlayer(SessionId, FGfVoidResult)`      | Register a player session. Errors: `SERVER_FULL`, `PLAYER_ALREADY_CONNECTED`. |
+| `DisconnectPlayer(SessionId, FGfRemoveResult)` | Remove a player session. Idempotent.                                          |
 
 ### UGameFlowSubsystem — Blueprint events (UPROPERTY BlueprintAssignable)
 
-| Event                                                       | Signature                              | When it fires                                        |
-| ----------------------------------------------------------- | -------------------------------------- | ---------------------------------------------------- |
-| `OnServerInfo`                                              | `(FServerInfo Info)`                   | Every server-info frame from the watch stream.       |
-| `OnPayloadChanged`                                          | `(FString Payload, bool bPresent)`     | Only when the launch payload changes.                |
-| `OnHealthDegraded`                                          | `()`                                   | After repeated health-ping failures.                 |
+| Event              | Signature                          | When it fires                                  |
+| ------------------ | ---------------------------------- | ---------------------------------------------- |
+| `OnServerInfo`     | `(FServerInfo Info)`               | Every server-info frame from the watch stream. |
+| `OnPayloadChanged` | `(FString Payload, bool bPresent)` | Only when the launch payload changes.          |
+| `OnHealthDegraded` | `()`                               | After repeated health-ping failures.           |
 
 ### UGameFlowSubsystem — synchronous reads (BlueprintPure)
 
-| Property / Method        | Type           | Description                                           |
-| ------------------------ | -------------- | ----------------------------------------------------- |
-| `PlayerCount()`          | `int32`        | Number of currently connected players.                |
-| `PlayerSessionIds()`     | `TArray<FString>` | Session IDs of all connected players.              |
-| `PlayerCapacity()`       | `int64`        | Max capacity reported by the runtime.                 |
-| `PlayersTracked()`       | `bool`         | Whether player tracking is enabled.                   |
-| `GetMode()`              | `EGameFlowMode`| `Sidecar` or `Local`, resolved after `Start()`.      |
+| Property / Method    | Type              | Description                                     |
+| -------------------- | ----------------- | ----------------------------------------------- |
+| `PlayerCount()`      | `int32`           | Number of currently connected players.          |
+| `PlayerSessionIds()` | `TArray<FString>` | Session IDs of all connected players.           |
+| `PlayerCapacity()`   | `int64`           | Max capacity reported by the runtime.           |
+| `PlayersTracked()`   | `bool`            | Whether player tracking is enabled.             |
+| `GetMode()`          | `EGameFlowMode`   | `Sidecar` or `Local`, resolved after `Start()`. |
 
 ### FGameFlowOptions (C++ only)
 
@@ -144,28 +142,28 @@ Pass to `FGameFlowClient` directly for advanced configuration. `UGameFlowSubsyst
 uses defaults; override by constructing `FGameFlowClient` manually and calling
 `Initialize()` before using the subsystem.
 
-| Field                 | Default     | Description                                                    |
-| --------------------- | ----------- | -------------------------------------------------------------- |
-| `Mode`                | auto-detect | Force `Sidecar` or `Local`.                                   |
-| `ConnectTimeoutMs`    | `30000`     | Max time to connect before `SIDECAR_UNAVAILABLE`.             |
-| `RequestTimeoutMs`    | `3000`      | Per-request HTTP timeout.                                     |
-| `HealthIntervalMs`    | `5000`      | Health ping cadence (clamped to ≥ 500 ms).                    |
-| `Logger`              | UE_LOG      | Inject a custom `IGameFlowLogger`.                            |
-| `Dispatcher`          | AsyncTask   | Custom `IGameFlowDispatcher` for callback delivery.           |
-| `OnHealthDegraded`    | —           | C++ callback for health-degraded (alternative to the event).  |
+| Field              | Default     | Description                                                  |
+| ------------------ | ----------- | ------------------------------------------------------------ |
+| `Mode`             | auto-detect | Force `Sidecar` or `Local`.                                  |
+| `ConnectTimeoutMs` | `30000`     | Max time to connect before `SIDECAR_UNAVAILABLE`.            |
+| `RequestTimeoutMs` | `3000`      | Per-request HTTP timeout.                                    |
+| `HealthIntervalMs` | `5000`      | Health ping cadence (clamped to ≥ 500 ms).                   |
+| `Logger`           | UE_LOG      | Inject a custom `IGameFlowLogger`.                           |
+| `Dispatcher`       | AsyncTask   | Custom `IGameFlowDispatcher` for callback delivery.          |
+| `OnHealthDegraded` | —           | C++ callback for health-degraded (alternative to the event). |
 
 ## Error codes
 
 All fallible operations return an `FGameFlowError` with one of these stable codes:
 
-| Code                        | When                                                              |
-| --------------------------- | ----------------------------------------------------------------- |
-| `SIDECAR_UNAVAILABLE`       | `Start()` timed out probing the runtime.                         |
-| `PLAYER_ALREADY_CONNECTED`  | `ConnectPlayer()` with an already-tracked session ID.            |
-| `SERVER_FULL`               | `ConnectPlayer()` when the player list is at capacity.           |
-| `PLAYER_TRACKING_DISABLED`  | Player operation when the runtime has tracking turned off.       |
-| `NOT_CONNECTED`             | Any call before `Start()` or after `Shutdown()`.                 |
-| `REQUEST_FAILED`            | Any HTTP-level failure (unexpected status, timeout, parse error).|
+| Code                       | When                                                              |
+| -------------------------- | ----------------------------------------------------------------- |
+| `SIDECAR_UNAVAILABLE`      | `Start()` timed out probing the runtime.                          |
+| `PLAYER_ALREADY_CONNECTED` | `ConnectPlayer()` with an already-tracked session ID.             |
+| `SERVER_FULL`              | `ConnectPlayer()` when the player list is at capacity.            |
+| `PLAYER_TRACKING_DISABLED` | Player operation when the runtime has tracking turned off.        |
+| `NOT_CONNECTED`            | Any call before `Start()` or after `Shutdown()`.                  |
+| `REQUEST_FAILED`           | Any HTTP-level failure (unexpected status, timeout, parse error). |
 
 Check `Error.IsOk()` before proceeding, and branch on `Error.Code` for
 recoverable conditions.
@@ -178,11 +176,11 @@ no-op, and player tracking works against an in-memory list.
 
 Configure via environment variables before launching the server:
 
-| Variable               | Effect                                                                  |
-| ---------------------- | ----------------------------------------------------------------------- |
-| `GAMEFLOW_SDK_MODE`    | Set to `local` to force local mode; `sidecar` to force sidecar mode.   |
-| `GAMEFLOW_MAX_PLAYERS` | Player-list capacity (unset = unlimited, `0` = tracking disabled).      |
-| `GAMEFLOW_PAYLOAD`     | Simulates the launch payload string (match config, map name, etc.).    |
+| Variable               | Effect                                                               |
+| ---------------------- | -------------------------------------------------------------------- |
+| `GAMEFLOW_SDK_MODE`    | Set to `local` to force local mode; `sidecar` to force sidecar mode. |
+| `GAMEFLOW_MAX_PLAYERS` | Player-list capacity (unset = unlimited, `0` = tracking disabled).   |
+| `GAMEFLOW_PAYLOAD`     | Simulates the launch payload string (match config, map name, etc.).  |
 
 The same binary runs on GameFlow and on your machine with no code changes.
 

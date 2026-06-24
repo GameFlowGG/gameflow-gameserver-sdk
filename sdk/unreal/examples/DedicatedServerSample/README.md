@@ -8,10 +8,10 @@ configuration required.
 
 ## Files
 
-| File                                                             | Role                                                        |
-| ---------------------------------------------------------------- | ----------------------------------------------------------- |
-| [`GameFlowServerBootstrap.h`](GameFlowServerBootstrap.h)         | GameMode subclass declaration.                              |
-| [`GameFlowServerBootstrap.cpp`](GameFlowServerBootstrap.cpp)     | `BeginPlay` → Start + Ready; `PostLogin`/`Logout` → track. |
+| File                                                         | Role                                                       |
+| ------------------------------------------------------------ | ---------------------------------------------------------- |
+| [`GameFlowServerBootstrap.h`](GameFlowServerBootstrap.h)     | GameMode subclass declaration.                             |
+| [`GameFlowServerBootstrap.cpp`](GameFlowServerBootstrap.cpp) | `BeginPlay` → Start + Ready; `PostLogin`/`Logout` → track. |
 
 ## Drop it into your project
 
@@ -39,13 +39,13 @@ configuration required.
 
 ## How it works
 
-| Step                  | Where                                           | What happens                                                 |
-| --------------------- | ----------------------------------------------- | ------------------------------------------------------------ |
-| Connect               | `BeginPlay` → `Start()`                         | Probes the runtime; falls back to local mode off-platform.   |
-| Ready                 | Start callback → `Ready()`                      | Platform routes players to this server; health loop starts.  |
-| Player joins          | `PostLogin` → `ConnectPlayer(SessionId)`        | Session registered with the platform player list.            |
-| Player leaves         | `Logout` → `DisconnectPlayer(SessionId)`        | Session removed; idempotent if they never finished joining.  |
-| Shutdown              | `UGameFlowSubsystem::Deinitialize()` (auto)     | Health loop stops, watch closes, `POST /shutdown` is sent.   |
+| Step          | Where                                       | What happens                                                |
+| ------------- | ------------------------------------------- | ----------------------------------------------------------- |
+| Connect       | `BeginPlay` → `Start()`                     | Probes the runtime; falls back to local mode off-platform.  |
+| Ready         | Start callback → `Ready()`                  | Platform routes players to this server; health loop starts. |
+| Player joins  | `PostLogin` → `ConnectPlayer(SessionId)`    | Session registered with the platform player list.           |
+| Player leaves | `Logout` → `DisconnectPlayer(SessionId)`    | Session removed; idempotent if they never finished joining. |
+| Shutdown      | `UGameFlowSubsystem::Deinitialize()` (auto) | Health loop stops, watch closes, `POST /shutdown` is sent.  |
 
 ## Run it locally (local mode)
 

@@ -4,3 +4,4 @@ coverage/
 pnpm-lock.yaml
 LICENSE
 sdk/unity/Packages/gg.gameflow.gameserver/LICENSE.md
+sdk/unreal/GameFlow/LICENSE.md
