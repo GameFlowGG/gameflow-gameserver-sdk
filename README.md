@@ -29,7 +29,7 @@ development. See each SDK's README for a language-specific quickstart.
 | Rust       | [`gameflow-gameserver-sdk`](sdk/rust)           | Beta   | 0.1.0   |
 | Go         | [`gameflow-gameserver-sdk/sdk/go`](sdk/go)      | Beta   | 0.1.0   |
 | Unity      | [`gg.gameflow.gameserver`](sdk/unity)           | Beta   | 0.1.0   |
-| Unreal     | Planned                                         | —      | —       |
+| Unreal     | [GameFlow plugin](sdk/unreal)                   | Beta   | 0.1.0   |
 
 ## How it works
 
@@ -61,13 +61,14 @@ sdk/godot/               Godot 4 SDK (GDScript addon)
 sdk/rust/                Rust SDK (gameflow-gameserver-sdk)
 sdk/go/                  Go SDK (stdlib-only, engine-agnostic)
 sdk/unity/               Unity 2022.3+ SDK (pure C# core + thin Unity layer)
+sdk/unreal/              Unreal Engine 5.3+ SDK (C++ core + thin engine layer)
 docs/                    Guides and the SDK behavioral spec
 tools/conformance/       Fake runtime fixture shared by every SDK test suite
 ```
 
 Each SDK keeps its runnable examples under its own directory — `sdk/typescript/examples/`,
-`sdk/rust/examples/`, `sdk/godot/example/`, `sdk/go/examples/`, and the Unity package's
-`Samples~/`.
+`sdk/rust/examples/`, `sdk/godot/example/`, `sdk/go/examples/`, the Unity package's
+`Samples~/`, and `sdk/unreal/examples/`.
 
 ## Development
 
@@ -79,6 +80,7 @@ task ci:sdk       # TypeScript SDK CI (format, typecheck, build, test)
 task ci:go        # Go SDK CI         (also: task test:go)
 task ci:rust      # Rust SDK CI       (also: task test:rust)
 task ci:unity     # Unity SDK CI      (also: task test:unity)
+task ci:unreal    # Unreal SDK CI     (also: task test:unreal)
 task test:godot   # Godot SDK tests
 task ci:proto     # buf lint + format check
 ```

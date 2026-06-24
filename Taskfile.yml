@@ -46,6 +46,12 @@ tasks:
     cmds:
       - dotnet test GameFlow.Core.Tests/GameFlow.Core.Tests.csproj
 
+  test:unreal:
+    desc: Run Unreal SDK automation tests (requires UE_ROOT; Node for conformance)
+    dir: sdk/unreal
+    cmds:
+      - bash scripts/run-tests.sh GameFlow
+
   ci:proto:
     desc: Lint and format-check proto files
     cmds:
@@ -87,3 +93,9 @@ tasks:
     cmds:
       - dotnet build Core.csproj -c Release
       - dotnet test GameFlow.Core.Tests/GameFlow.Core.Tests.csproj -c Release
+
+  ci:unreal:
+    desc: Full Unreal SDK CI (build host project + automation tests)
+    dir: sdk/unreal
+    cmds:
+      - bash scripts/run-tests.sh GameFlow

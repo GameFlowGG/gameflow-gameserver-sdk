@@ -1,0 +1,16 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "0.1.0",
+  "FriendlyName": "GameFlow Game Server SDK",
+  "Description": "Integrate Unreal dedicated game servers with GameFlow: lifecycle, automatic health reporting, and player tracking.",
+  "Category": "Networking",
+  "CreatedBy": "GameFlow",
+  "CreatedByURL": "https://gameflow.gg",
+  "CanContainContent": false,
+  "Installed": false,
+  "Modules": [
+    { "Name": "GameFlowCore", "Type": "Runtime", "LoadingPhase": "PreDefault" },
+    { "Name": "GameFlowUnreal", "Type": "Runtime", "LoadingPhase": "Default" }
+  ]
+}

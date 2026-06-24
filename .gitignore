@@ -20,3 +20,4 @@ sdk/unity/tests/bin/
 sdk/unity/tests/obj/
 sdk/unity/tests/**/bin/
 sdk/unity/tests/**/obj/
+.superpowers/

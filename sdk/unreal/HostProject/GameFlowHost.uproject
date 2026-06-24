@@ -1,0 +1,12 @@
+{
+  "FileVersion": 3,
+  "EngineAssociation": "",
+  "Category": "",
+  "Description": "Host project for building and running GameFlow SDK automation tests.",
+  "Modules": [
+    { "Name": "GameFlowHost", "Type": "Runtime", "LoadingPhase": "Default" }
+  ],
+  "Plugins": [
+    { "Name": "GameFlow", "Enabled": true }
+  ]
+}
