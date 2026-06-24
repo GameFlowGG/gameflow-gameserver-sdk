@@ -12,6 +12,7 @@ on:
           - godot
           - rust
           - go
+          - unreal
       version:
         description: 'Version to release (e.g. 0.1.0)'
         required: true
@@ -209,3 +210,44 @@ jobs:
           gh release create "$TAG" \
             --title "GameFlow Go SDK ${{ inputs.version }}" \
             --generate-notes
+
+  release-unreal:
+    if: inputs.sdk == 'unreal'
+    runs-on: ubuntu-latest
+
+    # No build/test step: the SDK is an Unreal C++ plugin and Unreal Engine
+    # cannot run in standard CI. It is verified out-of-band via the WSL
+    # automation suite (`bash sdk/unreal/scripts/run-tests.sh`) before release.
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set version
+        run: |
+          sed -i 's/"VersionName": *"[^"]*"/"VersionName": "${{ inputs.version }}"/' \
+            sdk/unreal/GameFlow/GameFlow.uplugin
+
+      - name: Package plugin
+        # Unreal has no package registry. The plugin ships as source (no
+        # precompiled binaries) so it builds against the user's engine (UE 5.3+).
+        # Zip rooted at the GameFlow folder so it unpacks straight into
+        # <Project>/Plugins/GameFlow.
+        run: |
+          cd sdk/unreal
+          zip -qr "$GITHUB_WORKSPACE/gameflow-unreal-sdk-${{ inputs.version }}.zip" GameFlow \
+            -x '*/Binaries/*' '*/Intermediate/*' '*/Saved/*' '*/DerivedDataCache/*'
+
+      - name: Tag and create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        # The GitHub release (tag + zip) IS the distribution — there is nothing
+        # to publish to. Users drop the unzipped GameFlow folder into Plugins/.
+        run: |
+          TAG="sdk/unreal/v${{ inputs.version }}"
+          git tag "$TAG"
+          git push origin "$TAG"
+          gh release create "$TAG" \
+            --title "GameFlow Unreal SDK ${{ inputs.version }}" \
+            --generate-notes \
+            "gameflow-unreal-sdk-${{ inputs.version }}.zip"
